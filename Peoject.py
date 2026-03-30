@@ -7,7 +7,6 @@ from pathlib import Path
 import pandas as pd
 import lxml.etree as ET
 
-# 引入 Tkinter 用于文件选择弹窗
 import tkinter as tk
 from tkinter import filedialog
 
@@ -17,12 +16,9 @@ from textual.widgets import Header, Footer, Button, Input, Label, Select, Static
 from textual.screen import Screen
 from textual.binding import Binding
 
-# 引入 OpenAI 库用来调用 DeepSeek
 from openai import OpenAI
 
 DB_FILE = "users.json"
-
-# ================= 数据处理逻辑 =================
 
 def load_users():
     if not os.path.exists(DB_FILE):
@@ -116,8 +112,6 @@ def get_health_summary(folder_path):
     except:
         return None
 
-# ================= Textual UI 屏幕定义 =================
-
 class LoginScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -191,7 +185,6 @@ class DashboardScreen(Screen):
             
             Label("2. Apple Health Data (Optional)", classes="section-title"),
             
-            # ➕ 核心修改点：横向排列 输入框 和 选择文件按钮
             Horizontal(
                 Input(placeholder="Path to Apple Health export.zip", id="zip_path_input"),
                 Button("📁 Choose File", variant="default", id="choose_file_btn"),
@@ -217,12 +210,10 @@ class DashboardScreen(Screen):
         log_view = self.query_one("#log_view", Label)
         zip_input = self.query_one("#zip_path_input", Input)
         
-        # ➕ 核心修改点：点击“Choose File”按钮弹出系统选择框
         if event.button.id == "choose_file_btn":
-            # 初始化 Tkinter
+            
             root = tk.Tk()
             root.withdraw()
-            # 强行让文件弹窗置顶，免得藏在终端后面看不到
             root.attributes('-topmost', True) 
             
             file_path = filedialog.askopenfilename(
@@ -231,7 +222,6 @@ class DashboardScreen(Screen):
             )
             root.destroy()
             
-            # 如果用户在弹窗里选了文件，把它写进输入框
             if file_path:
                 zip_input.value = file_path
                 log_view.update(f"[green] Selected file: {file_path}[/green]")
@@ -317,9 +307,6 @@ class DashboardScreen(Screen):
         self.app.current_user = None
         self.app.activity_data = ""
         self.app.pop_screen()
-
-
-# ================= 主应用 =================
 
 class FridgeFitApp(App):
     CSS = """
